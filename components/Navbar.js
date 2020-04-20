@@ -16,6 +16,7 @@ const Navbar = () => {
             <Navlink href={'/sobre'} >Sobre</Navlink>
             <Navlink href={'/cadastro'} >Cadastro</Navlink>
             <Navlink href={'/entrar'} >Entrar</Navlink>
+            <Navlink href={'/api/logout'} >Logout</Navlink>
         </div>
     )
 }

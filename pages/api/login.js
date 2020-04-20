@@ -1,14 +1,7 @@
+import auth0 from '../../lib/auth0'
+
 const Login = async(request, response) => {
-    return(
-        response.send(
-            {
-                name: 'Marcos Gray',
-                age: '48 anos',
-                Degree: 'Nivel Superior',
-                formation: 'Analise e Desenvolvimento de Sistemas',
-            }
-        )
-    )
+    await auth0.handleLogin(request, response)
 }
 
 export default Login

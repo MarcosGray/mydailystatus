@@ -294,7 +294,15 @@ const Navbar = () => {
       lineNumber: 18,
       columnNumber: 13
     }
-  }, "Entrar"));
+  }, "Entrar"), __jsx(Navlink, {
+    href: '/api/logout',
+    __self: undefined,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 19,
+      columnNumber: 13
+    }
+  }, "Logout"));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Navbar);
