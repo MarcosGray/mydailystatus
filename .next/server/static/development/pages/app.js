@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -161,6 +161,38 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./lib/geo.js":
+/*!********************!*\
+  !*** ./lib/geo.js ***!
+  \********************/
+/*! exports provided: distance */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "distance", function() { return distance; });
+// alert(calcCrow(59.3293371,13.4877472,59.3225525,13.4619422).toFixed(1));
+// Converts numeric degrees to radians
+function toRad(Value) {
+  return Value * Math.PI / 180;
+} //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
+
+
+function distance(lat1, lon1, lat2, lon2) {
+  var R = 6371; // km
+
+  var dLat = toRad(lat2 - lat1);
+  var dLon = toRad(lon2 - lon1);
+  var lat1 = toRad(lat1);
+  var lat2 = toRad(lat2);
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return d;
+}
+
+/***/ }),
+
 /***/ "./pages/app.js":
 /*!**********************!*\
   !*** ./pages/app.js ***!
@@ -178,8 +210,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _lib_db__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../lib/db */ "./lib/db.js");
 /* harmony import */ var _lib_db__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_lib_db__WEBPACK_IMPORTED_MODULE_3__);
-var _jsxFileName = "/home/www/mydailystatus/pages/app.js";
+/* harmony import */ var _lib_geo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../lib/geo */ "./lib/geo.js");
+var _jsxFileName = "/home/marcos/www/fullstack-master/mydailystatus/pages/app.js";
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
 
 
 
@@ -189,10 +223,12 @@ const App = props => {
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
     if (!props.isAuth) {
       next_router__WEBPACK_IMPORTED_MODULE_2___default.a.push('/');
+    } else if (props.forceCreate) {
+      next_router__WEBPACK_IMPORTED_MODULE_2___default.a.push('/create-status');
     }
   });
 
-  if (!props.isAuth) {
+  if (!props.isAuth || props.forceCreate) {
     return null;
   }
 
@@ -200,24 +236,61 @@ const App = props => {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 16,
+      lineNumber: 19,
       columnNumber: 9
     }
   }, __jsx("h2", {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 17,
+      lineNumber: 20,
       columnNumber: 13
     }
-  }, "App"), __jsx("pre", {
+  }, "Status pr\xF3ximo a voc\xEA"), __jsx("table", {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 18,
+      lineNumber: 21,
       columnNumber: 13
     }
-  }, " ", JSON.stringify(props, null, 2), " "));
+  }, props.checkins.map(checkin => {
+    return __jsx("tr", {
+      __self: undefined,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 24,
+        columnNumber: 25
+      }
+    }, __jsx("td", {
+      __self: undefined,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 25,
+        columnNumber: 29
+      }
+    }, checkin.id === props.user.sub && 'Este é o seu status: '), __jsx("td", {
+      __self: undefined,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 26,
+        columnNumber: 29
+      }
+    }, checkin.status), __jsx("td", {
+      __self: undefined,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 27,
+        columnNumber: 29
+      }
+    }, JSON.stringify(checkin.coords)), __jsx("td", {
+      __self: undefined,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 28,
+        columnNumber: 29
+      }
+    }, checkin.distance));
+  })));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (App);
@@ -228,13 +301,41 @@ async function getServerSideProps({
   const session = await _lib_auth0__WEBPACK_IMPORTED_MODULE_1__["default"].getSession(req);
 
   if (session) {
-    const todaysCheckin = await _lib_db__WEBPACK_IMPORTED_MODULE_3__["db"].collection('markers').doc('2020-04-20').collection('checks').doc(session.user.sub).get();
+    const today = new Date();
+    const currentDate = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
+    const todaysCheckin = await _lib_db__WEBPACK_IMPORTED_MODULE_3__["db"].collection('markers').doc(currentDate).collection('checks').doc(session.user.sub).get();
     const todaysData = todaysCheckin.data();
+    console.log(todaysData);
     let forceCreate = true;
 
     if (todaysData) {
-      // ver o checkins
       forceCreate = false;
+      const checkins = await _lib_db__WEBPACK_IMPORTED_MODULE_3__["db"].collection('markers').doc(currentDate).collection('checks').near({
+        center: todaysData.coordinates,
+        radius: 1000
+      }).get(); //console.log(checkins)
+
+      const checkinsList = [];
+      checkins.docs.forEach(doc => {
+        // console.log(doc.id, doc.data())
+        checkinsList.push({
+          id: doc.id,
+          status: doc.data().status,
+          coords: {
+            lat: doc.data().coordinates.latitude,
+            long: doc.data().coordinates.longitude
+          },
+          distance: Object(_lib_geo__WEBPACK_IMPORTED_MODULE_4__["distance"])(todaysData.coordinates.latitude, todaysData.coordinates.longitude, doc.data().coordinates.latitude, doc.data().coordinates.longitude).toFixed(2)
+        });
+      });
+      return {
+        props: {
+          isAuth: true,
+          user: session.user,
+          forceCreate: false,
+          checkins: checkinsList
+        }
+      };
     }
 
     return {
@@ -256,14 +357,14 @@ async function getServerSideProps({
 
 /***/ }),
 
-/***/ 3:
+/***/ 10:
 /*!****************************!*\
   !*** multi ./pages/app.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/www/mydailystatus/pages/app.js */"./pages/app.js");
+module.exports = __webpack_require__(/*! /home/marcos/www/fullstack-master/mydailystatus/pages/app.js */"./pages/app.js");
 
 
 /***/ }),

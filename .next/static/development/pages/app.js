@@ -333,10 +333,10 @@ var e,t=(e=__webpack_require__(/*! querystring */ "./node_modules/querystring-es
 
 /***/ }),
 
-/***/ "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fapp&absolutePagePath=%2Fhome%2Fwww%2Fmydailystatus%2Fpages%2Fapp.js!./":
-/*!**************************************************************************************************************************************************************!*\
-  !*** ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fapp&absolutePagePath=%2Fhome%2Fwww%2Fmydailystatus%2Fpages%2Fapp.js ***!
-  \**************************************************************************************************************************************************************/
+/***/ "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fapp&absolutePagePath=%2Fhome%2Fmarcos%2Fwww%2Ffullstack-master%2Fmydailystatus%2Fpages%2Fapp.js!./":
+/*!******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fapp&absolutePagePath=%2Fhome%2Fmarcos%2Fwww%2Ffullstack-master%2Fmydailystatus%2Fpages%2Fapp.js ***!
+  \******************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2997,7 +2997,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/router */ "./node_modules/next/dist/client/router.js");
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_1__);
 var _this = undefined,
-    _jsxFileName = "/home/www/mydailystatus/pages/app.js";
+    _jsxFileName = "/home/marcos/www/fullstack-master/mydailystatus/pages/app.js";
 
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
@@ -3007,10 +3007,12 @@ var App = function App(props) {
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     if (!props.isAuth) {
       next_router__WEBPACK_IMPORTED_MODULE_1___default.a.push('/');
+    } else if (props.forceCreate) {
+      next_router__WEBPACK_IMPORTED_MODULE_1___default.a.push('/create-status');
     }
   });
 
-  if (!props.isAuth) {
+  if (!props.isAuth || props.forceCreate) {
     return null;
   }
 
@@ -3018,24 +3020,61 @@ var App = function App(props) {
     __self: _this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 16,
+      lineNumber: 19,
       columnNumber: 9
     }
   }, __jsx("h2", {
     __self: _this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 17,
+      lineNumber: 20,
       columnNumber: 13
     }
-  }, "App"), __jsx("pre", {
+  }, "Status pr\xF3ximo a voc\xEA"), __jsx("table", {
     __self: _this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 18,
+      lineNumber: 21,
       columnNumber: 13
     }
-  }, " ", JSON.stringify(props, null, 2), " "));
+  }, props.checkins.map(function (checkin) {
+    return __jsx("tr", {
+      __self: _this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 24,
+        columnNumber: 25
+      }
+    }, __jsx("td", {
+      __self: _this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 25,
+        columnNumber: 29
+      }
+    }, checkin.id === props.user.sub && 'Este é o seu status: '), __jsx("td", {
+      __self: _this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 26,
+        columnNumber: 29
+      }
+    }, checkin.status), __jsx("td", {
+      __self: _this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 27,
+        columnNumber: 29
+      }
+    }, JSON.stringify(checkin.coords)), __jsx("td", {
+      __self: _this,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 28,
+        columnNumber: 29
+      }
+    }, checkin.distance));
+  })));
 };
 
 var __N_SSP = true;
@@ -3043,14 +3082,14 @@ var __N_SSP = true;
 
 /***/ }),
 
-/***/ 1:
-/*!******************************************************************************************************************!*\
-  !*** multi next-client-pages-loader?page=%2Fapp&absolutePagePath=%2Fhome%2Fwww%2Fmydailystatus%2Fpages%2Fapp.js ***!
-  \******************************************************************************************************************/
+/***/ 4:
+/*!**********************************************************************************************************************************************!*\
+  !*** multi next-client-pages-loader?page=%2Fapp&absolutePagePath=%2Fhome%2Fmarcos%2Fwww%2Ffullstack-master%2Fmydailystatus%2Fpages%2Fapp.js ***!
+  \**********************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! next-client-pages-loader?page=%2Fapp&absolutePagePath=%2Fhome%2Fwww%2Fmydailystatus%2Fpages%2Fapp.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fapp&absolutePagePath=%2Fhome%2Fwww%2Fmydailystatus%2Fpages%2Fapp.js!./");
+module.exports = __webpack_require__(/*! next-client-pages-loader?page=%2Fapp&absolutePagePath=%2Fhome%2Fmarcos%2Fwww%2Ffullstack-master%2Fmydailystatus%2Fpages%2Fapp.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fapp&absolutePagePath=%2Fhome%2Fmarcos%2Fwww%2Ffullstack-master%2Fmydailystatus%2Fpages%2Fapp.js!./");
 
 
 /***/ }),
@@ -3066,5 +3105,5 @@ module.exports = dll_2adc2403d89adc16ead0;
 
 /***/ })
 
-},[[1,"static/runtime/webpack.js"]]]);
+},[[4,"static/runtime/webpack.js"]]]);
 //# sourceMappingURL=app.js.map
