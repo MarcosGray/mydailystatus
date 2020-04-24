@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -118,7 +118,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(_auth0_nextjs_auth0__WEBPACK_IMPORTED_MODULE_0__["initAuth0"])({
   clientId: process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRECT,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET,
   scope: process.env.AUTH0_SCOPE,
   domain: process.env.AUTH0_DOMAIN,
   redirectUri: process.env.AUTH0_REDIRECT_URI,
@@ -128,6 +128,24 @@ __webpack_require__.r(__webpack_exports__);
     cookieLifetime: process.env.AUTH0_COOKIE_LIFE_TIME
   }
 }));
+
+/***/ }),
+
+/***/ "./lib/datetime.js":
+/*!*************************!*\
+  !*** ./lib/datetime.js ***!
+  \*************************/
+/*! exports provided: getCurrentDate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentDate", function() { return getCurrentDate; });
+const getCurrentDate = () => {
+  const today = new Date();
+  const currentDate = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
+  return currentDate;
+};
 
 /***/ }),
 
@@ -193,6 +211,65 @@ function distance(lat1, lon1, lat2, lon2) {
 
 /***/ }),
 
+/***/ "./model/markers.js":
+/*!**************************!*\
+  !*** ./model/markers.js ***!
+  \**************************/
+/*! exports provided: checkUseExist, findChecksNearbyCheckin, setStatus */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkUseExist", function() { return checkUseExist; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findChecksNearbyCheckin", function() { return findChecksNearbyCheckin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setStatus", function() { return setStatus; });
+/* harmony import */ var _lib_db__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../lib/db */ "./lib/db.js");
+/* harmony import */ var _lib_db__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_lib_db__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _lib_geo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lib/geo */ "./lib/geo.js");
+/* harmony import */ var _lib_datetime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/datetime */ "./lib/datetime.js");
+
+
+
+const admin = __webpack_require__(/*! firebase-admin */ "firebase-admin");
+
+
+const checkUseExist = async user => {
+  const currentDate = Object(_lib_datetime__WEBPACK_IMPORTED_MODULE_2__["getCurrentDate"])();
+  const todaysCheckin = await _lib_db__WEBPACK_IMPORTED_MODULE_0__["db"].collection('markers').doc(currentDate).collection('checks').doc(user).get();
+  const todaysData = todaysCheckin.data();
+  return todaysData;
+};
+const findChecksNearbyCheckin = async checkin => {
+  const currentDate = Object(_lib_datetime__WEBPACK_IMPORTED_MODULE_2__["getCurrentDate"])();
+  const checkins = await _lib_db__WEBPACK_IMPORTED_MODULE_0__["db"].collection('markers').doc(currentDate).collection('checks').near({
+    center: checkin.coordinates,
+    radius: 1000
+  }).get();
+  const checkinsList = [];
+  checkins.docs.forEach(doc => {
+    checkinsList.push({
+      id: doc.id,
+      status: doc.data().status,
+      coords: {
+        lat: doc.data().coordinates.latitude,
+        long: doc.data().coordinates.longitude
+      },
+      distance: Object(_lib_geo__WEBPACK_IMPORTED_MODULE_1__["distance"])(checkin.coordinates.latitude, checkin.coordinates.longitude, doc.data().coordinates.latitude, doc.data().coordinates.longitude).toFixed(2)
+    });
+  });
+  return checkinsList;
+};
+const setStatus = async (user, dados) => {
+  const currentDate = Object(_lib_datetime__WEBPACK_IMPORTED_MODULE_2__["getCurrentDate"])();
+  await _lib_db__WEBPACK_IMPORTED_MODULE_0__["db"].collection('markers').doc(currentDate).collection('checks').doc(user).set({
+    status: dados.status,
+    user: user,
+    coordinates: new admin.firestore.GeoPoint(dados.coords.lat, dados.coords.long)
+  });
+};
+
+/***/ }),
+
 /***/ "./pages/app.js":
 /*!**********************!*\
   !*** ./pages/app.js ***!
@@ -208,12 +285,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_auth0__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lib/auth0 */ "./lib/auth0.js");
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! next/router */ "next/router");
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _lib_db__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../lib/db */ "./lib/db.js");
-/* harmony import */ var _lib_db__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_lib_db__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _lib_geo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../lib/geo */ "./lib/geo.js");
-var _jsxFileName = "/home/marcos/www/fullstack-master/mydailystatus/pages/app.js";
+/* harmony import */ var _model_markers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../model/markers */ "./model/markers.js");
+var _jsxFileName = "/home/www/mydailystatus/pages/app.js";
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
-
 
 
 
@@ -236,57 +310,58 @@ const App = props => {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 19,
+      lineNumber: 18,
       columnNumber: 9
     }
   }, __jsx("h2", {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 20,
+      lineNumber: 19,
       columnNumber: 13
     }
   }, "Status pr\xF3ximo a voc\xEA"), __jsx("table", {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 21,
+      lineNumber: 20,
       columnNumber: 13
     }
   }, props.checkins.map(checkin => {
     return __jsx("tr", {
+      key: checkin.id,
       __self: undefined,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 24,
+        lineNumber: 23,
         columnNumber: 25
       }
     }, __jsx("td", {
       __self: undefined,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 25,
+        lineNumber: 24,
         columnNumber: 29
       }
     }, checkin.id === props.user.sub && 'Este é o seu status: '), __jsx("td", {
       __self: undefined,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 26,
+        lineNumber: 25,
         columnNumber: 29
       }
     }, checkin.status), __jsx("td", {
       __self: undefined,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 27,
+        lineNumber: 26,
         columnNumber: 29
       }
     }, JSON.stringify(checkin.coords)), __jsx("td", {
       __self: undefined,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 28,
+        lineNumber: 27,
         columnNumber: 29
       }
     }, checkin.distance));
@@ -298,73 +373,44 @@ async function getServerSideProps({
   req,
   res
 }) {
+  let user = {};
+  let isAuth = false;
+  let forceCreate = false;
+  let checkins = [];
   const session = await _lib_auth0__WEBPACK_IMPORTED_MODULE_1__["default"].getSession(req);
 
   if (session) {
-    const today = new Date();
-    const currentDate = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
-    const todaysCheckin = await _lib_db__WEBPACK_IMPORTED_MODULE_3__["db"].collection('markers').doc(currentDate).collection('checks').doc(session.user.sub).get();
-    const todaysData = todaysCheckin.data();
-    console.log(todaysData);
-    let forceCreate = true;
+    isAuth = true;
+    user = session.user;
+    const todaysData = await Object(_model_markers__WEBPACK_IMPORTED_MODULE_3__["checkUseExist"])(session.user.sub);
 
-    if (todaysData) {
-      forceCreate = false;
-      const checkins = await _lib_db__WEBPACK_IMPORTED_MODULE_3__["db"].collection('markers').doc(currentDate).collection('checks').near({
-        center: todaysData.coordinates,
-        radius: 1000
-      }).get(); //console.log(checkins)
-
-      const checkinsList = [];
-      checkins.docs.forEach(doc => {
-        // console.log(doc.id, doc.data())
-        checkinsList.push({
-          id: doc.id,
-          status: doc.data().status,
-          coords: {
-            lat: doc.data().coordinates.latitude,
-            long: doc.data().coordinates.longitude
-          },
-          distance: Object(_lib_geo__WEBPACK_IMPORTED_MODULE_4__["distance"])(todaysData.coordinates.latitude, todaysData.coordinates.longitude, doc.data().coordinates.latitude, doc.data().coordinates.longitude).toFixed(2)
-        });
-      });
-      return {
-        props: {
-          isAuth: true,
-          user: session.user,
-          forceCreate: false,
-          checkins: checkinsList
-        }
-      };
+    if (!todaysData) {
+      forceCreate = true;
+    } else {
+      checkins = await Object(_model_markers__WEBPACK_IMPORTED_MODULE_3__["findChecksNearbyCheckin"])(todaysData);
     }
-
-    return {
-      props: {
-        isAuth: true,
-        user: session.user,
-        forceCreate
-      }
-    };
   }
 
   return {
     props: {
-      isAuth: false,
-      user: {}
+      isAuth,
+      user,
+      forceCreate,
+      checkins
     }
   };
 }
 
 /***/ }),
 
-/***/ 10:
+/***/ 3:
 /*!****************************!*\
   !*** multi ./pages/app.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/marcos/www/fullstack-master/mydailystatus/pages/app.js */"./pages/app.js");
+module.exports = __webpack_require__(/*! /home/www/mydailystatus/pages/app.js */"./pages/app.js");
 
 
 /***/ }),

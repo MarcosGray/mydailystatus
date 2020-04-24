@@ -1,4 +1,14 @@
 {
+    "env": {
+        "AUTH0_CLIENT_ID": "@auth0-client-id",
+        "AUTH0_CLIENT_SECRET": "@auth0-client-secrect",
+        "AUTH0_SCOPE": "openid profile",
+        "AUTH0_DOMAIN": "marcosgraycom.auth0.com",
+        "AUTH0_REDIRECT_URI": "https://mydailystatus.marcosgray.now.sh/api/callback",
+        "AUTH0_POST_LOGOUT_REDIRECT_URI": "https://mydailystatus.marcosgray.now.sh/",
+        "AUTH0_COOKIE_SECRET": "asdfghjklçqwertyuiopzxcvbnmohdso",
+        "AUTH0_COOKIE_LIFE_TIME": "3600"
+    },
     "build": {
         "env": {
             "AUTH0_CLIENT_ID": "@auth0-client-id",
