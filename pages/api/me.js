@@ -7,4 +7,5 @@ const me = async(request, response) => {
         response.status(500).end(err.message)
     }
 }
+
 export default me
