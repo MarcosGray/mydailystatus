@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import auth0 from '../lib/auth0'
 import axios from "axios";
+import router from 'next/router'
+import { AuthContext } from '../lib/AuthContext'
 
 const CreateStatus = () => {
-
+    const auth = useContext(AuthContext)
     const [dados, setDados] = useState({
         status: 'bem',
         coords: {
@@ -11,6 +13,9 @@ const CreateStatus = () => {
             long: null
         }
     })
+    if (auth.isAuthReady && !auth.isAuth) {
+        router.push('/')
+    }
     const getMyLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
@@ -61,6 +66,7 @@ const CreateStatus = () => {
                 className="py-4 m-5 px-2 rounded bg-pink-900 text-gray-200 font-bold shadow-lg hover:bg-pink-800 block w-1/4 text-center mx-auto"
                 onClick={save} >Salvar minha localização
             </button>
+            <pre> {JSON.stringify(auth)} </pre>
         </div>
     )
 }

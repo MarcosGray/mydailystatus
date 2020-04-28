@@ -174,8 +174,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Navbar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Navbar */ "./components/Navbar.js");
-/* harmony import */ var isomorphic_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! isomorphic-fetch */ "isomorphic-fetch");
-/* harmony import */ var isomorphic_fetch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(isomorphic_fetch__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _lib_AuthContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/AuthContext */ "./lib/AuthContext.js");
 var _jsxFileName = "/home/www/mydailystatus/components/Header.js";
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
@@ -183,25 +182,12 @@ var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
 const Header = () => {
-  const {
-    0: user,
-    1: setUser
-  } = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({});
-  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
-    const getMe = async () => {
-      const res = await isomorphic_fetch__WEBPACK_IMPORTED_MODULE_2___default()('/api/me');
-      const authUser = await res.json(); // console.log(authUser)
-
-      setUser(authUser);
-    };
-
-    getMe();
-  }, []);
+  const auth = Object(_lib_AuthContext__WEBPACK_IMPORTED_MODULE_2__["useAuth"])();
   return __jsx("div", {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 17,
+      lineNumber: 9,
       columnNumber: 9
     }
   }, __jsx("div", {
@@ -209,7 +195,7 @@ const Header = () => {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 18,
+      lineNumber: 10,
       columnNumber: 13
     }
   }, __jsx("img", {
@@ -220,17 +206,17 @@ const Header = () => {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 19,
+      lineNumber: 11,
       columnNumber: 17
     }
   })), __jsx(_Navbar__WEBPACK_IMPORTED_MODULE_1__["default"], {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 21,
+      lineNumber: 13,
       columnNumber: 13
     }
-  }), JSON.stringify(user));
+  }));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Header);
@@ -250,8 +236,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
 /* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _lib_AuthContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/AuthContext */ "./lib/AuthContext.js");
 var _jsxFileName = "/home/www/mydailystatus/components/Navbar.js";
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
 
 
 
@@ -264,7 +252,7 @@ const Navlink = ({
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 6,
+      lineNumber: 7,
       columnNumber: 9
     }
   }, __jsx("a", {
@@ -272,19 +260,20 @@ const Navlink = ({
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 7,
+      lineNumber: 8,
       columnNumber: 13
     }
   }, children));
 };
 
 const Navbar = () => {
+  const auth = Object(_lib_AuthContext__WEBPACK_IMPORTED_MODULE_2__["useAuth"])();
   return __jsx("div", {
     className: "bg-red-900 text-gray-100 font-semibold py-4 text-center ",
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 15,
+      lineNumber: 17,
       columnNumber: 9
     }
   }, __jsx(Navlink, {
@@ -292,37 +281,107 @@ const Navbar = () => {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 16,
+      lineNumber: 18,
       columnNumber: 13
     }
-  }, "Sobre"), __jsx(Navlink, {
+  }, "Sobre"), auth.isAuth && __jsx(Navlink, {
     href: '/cadastro',
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 17,
-      columnNumber: 13
+      lineNumber: 19,
+      columnNumber: 30
     }
-  }, "Cadastro"), __jsx(Navlink, {
-    href: '/entrar',
+  }, "Cadastro"), auth.isAuth && __jsx(Navlink, {
+    href: '/app',
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 18,
-      columnNumber: 13
+      lineNumber: 20,
+      columnNumber: 30
     }
-  }, "Entrar"), __jsx(Navlink, {
+  }, "Ver Status"), !auth.isAuth && __jsx(Navlink, {
+    href: '/',
+    __self: undefined,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 21,
+      columnNumber: 31
+    }
+  }, "Entrar"), auth.isAuth && __jsx(Navlink, {
     href: '/api/logout',
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 19,
-      columnNumber: 13
+      lineNumber: 22,
+      columnNumber: 30
     }
   }, "Logout"));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Navbar);
+
+/***/ }),
+
+/***/ "./lib/AuthContext.js":
+/*!****************************!*\
+  !*** ./lib/AuthContext.js ***!
+  \****************************/
+/*! exports provided: AuthContext, AuthProvider, useAuth */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthContext", function() { return AuthContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthProvider", function() { return AuthProvider; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useAuth", function() { return useAuth; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var isomorphic_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! isomorphic-fetch */ "isomorphic-fetch");
+/* harmony import */ var isomorphic_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(isomorphic_fetch__WEBPACK_IMPORTED_MODULE_1__);
+var _jsxFileName = "/home/www/mydailystatus/lib/AuthContext.js";
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
+
+const AuthContext = Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])();
+const AuthProvider = ({
+  children
+}) => {
+  const {
+    0: user,
+    1: setUser
+  } = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({});
+  const {
+    0: isAuthReady,
+    1: setAuthReady
+  } = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false);
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    const getMe = async () => {
+      const res = await isomorphic_fetch__WEBPACK_IMPORTED_MODULE_1___default()('/api/me');
+      const authUser = await res.json();
+      setUser(authUser);
+      setAuthReady(true);
+    };
+
+    getMe();
+  }, []);
+  return __jsx(AuthContext.Provider, {
+    value: {
+      user,
+      isAuthReady,
+      isAuth: !user.error
+    },
+    __self: undefined,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 19,
+      columnNumber: 9
+    }
+  }, children);
+};
+const useAuth = () => {
+  return Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(AuthContext);
+};
 
 /***/ }),
 
@@ -2010,6 +2069,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styles_styles_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_styles_styles_css__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _components_Header__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Header */ "./components/Header.js");
 /* harmony import */ var _components_Footer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Footer */ "./components/Footer.js");
+/* harmony import */ var _lib_AuthContext__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../lib/AuthContext */ "./lib/AuthContext.js");
 var _jsxFileName = "/home/www/mydailystatus/pages/_app.js";
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
@@ -2020,47 +2080,55 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 
 
+
 const App = ({
   Component,
   pageProps
 }) => {
-  return __jsx("div", {
-    __self: undefined,
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 10,
-      columnNumber: 9
-    }
-  }, __jsx(_components_Header__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  return __jsx(_lib_AuthContext__WEBPACK_IMPORTED_MODULE_4__["AuthProvider"], {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
       lineNumber: 11,
-      columnNumber: 13
+      columnNumber: 9
     }
-  }), __jsx("div", {
-    className: "min-h-screen bg-red-100 container mx-auto px-32",
+  }, __jsx("div", {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
       lineNumber: 12,
       columnNumber: 13
     }
-  }, __jsx(Component, _extends({}, pageProps, {
+  }, __jsx(_components_Header__WEBPACK_IMPORTED_MODULE_2__["default"], {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
       lineNumber: 13,
       columnNumber: 17
     }
-  }))), __jsx(_components_Footer__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }), __jsx("div", {
+    className: "min-h-screen bg-red-100 container mx-auto px-32",
+    __self: undefined,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 14,
+      columnNumber: 17
+    }
+  }, __jsx(Component, _extends({}, pageProps, {
     __self: undefined,
     __source: {
       fileName: _jsxFileName,
       lineNumber: 15,
-      columnNumber: 13
+      columnNumber: 21
     }
-  }));
+  }))), __jsx(_components_Footer__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    __self: undefined,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 17,
+      columnNumber: 17
+    }
+  })));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (App);

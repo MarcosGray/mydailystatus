@@ -2,8 +2,10 @@ import React, { useEffect } from 'react'
 import auth0 from '../lib/auth0'
 import router from 'next/router'
 import { checkUseExist, findChecksNearbyCheckin } from '../model/markers'
+import { useAuth } from '../lib/AuthContext'
 
 const App = (props) => {
+    const auth = useAuth()
     useEffect(() => {
         if (!props.isAuth) {
             router.push('/')
@@ -16,7 +18,8 @@ const App = (props) => {
     }
     return(
         <div>
-            <h2>Status próximo a você</h2>
+        <h2>Olá { auth.user.name } </h2>    
+        <h2>Status próximo a você</h2>
             <table>
                 {props.checkins.map(checkin => {
                     return(
